@@ -1,0 +1,82 @@
+name: Merge filter lists
+
+on:
+  schedule:
+    # 每小时跑一次。GitHub 免费 runner 常有 5~20 分钟排队延迟，属正常现象。
+    - cron: "17 * * * *"
+  workflow_dispatch: {}
+  push:
+    branches: [main]
+    paths:
+      - "sources.json"
+      - "merge.py"
+      - ".github/workflows/merge.yml"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: merge-lists
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Merge and dedupe
+        run: python3 merge.py --out dist
+
+      - name: Safety check (avoid publishing a broken list)
+        id: guard
+        run: |
+          set -e
+          NEW=$(grep -c '^||' dist/merged-dns.txt || true)
+          echo "新列表域名数: $NEW"
+          PREV=0
+          if git fetch origin dist --depth=1 2>/dev/null; then
+            PREV=$(git show origin/dist:merged-dns.txt 2>/dev/null | grep -c '^||' || true)
+          fi
+          echo "上一版域名数: $PREV"
+          if [ "$NEW" -lt 1000 ]; then
+            echo "::error::合并结果少于 1000 条，疑似源站异常，拒绝发布"
+            exit 1
+          fi
+          if [ "$PREV" -gt 0 ] && [ "$NEW" -lt $((PREV * 70 / 100)) ]; then
+            echo "::error::域名数比上一版下降超过 30%（$PREV -> $NEW），疑似源站异常，拒绝发布"
+            exit 1
+          fi
+
+      - name: Publish to dist branch
+        run: |
+          set -e
+          cd dist
+          git init -q
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout -q -b dist
+          git add -A
+          git commit -q -m "chore: update merged lists $(date -u +%Y-%m-%dT%H:%M:%SZ)"
+          git push -f -q "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" dist
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Purge jsDelivr cache
+        continue-on-error: true
+        run: |
+          for f in merged-dns.txt merged-hosts.txt; do
+            curl -fsS "https://purge.jsdelivr.net/gh/${GITHUB_REPOSITORY}@dist/${f}" || true
+          done
+
+      - name: Job summary
+        if: always()
+        run: cat dist/stats.md >> "$GITHUB_STEP_SUMMARY" || true

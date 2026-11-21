@@ -1,0 +1,45 @@
+{
+  "sources": [
+    {
+      "name": "10007_auto",
+      "urls": [
+        "https://raw.githubusercontent.com/lingeringsound/10007_auto/master/all",
+        "https://cdn.jsdelivr.net/gh/lingeringsound/10007_auto@master/all",
+        "https://gh-proxy.com/raw.githubusercontent.com/lingeringsound/10007_auto/master/all"
+      ]
+    },
+    {
+      "name": "AD886",
+      "urls": [
+        "https://raw.githubusercontent.com/qq5460168/AD886/main/dnslist.txt",
+        "https://cdn.jsdelivr.net/gh/qq5460168/AD886@main/dnslist.txt",
+        "https://gh-proxy.com/raw.githubusercontent.com/qq5460168/AD886/main/dnslist.txt"
+      ]
+    },
+    {
+      "name": "abclq-dns-full",
+      "urls": [
+        "https://cdn.jsdelivr.net/gh/abclq/home-dns-adblock@main/dist/adguard-dns-full.txt",
+        "https://fastly.jsdelivr.net/gh/abclq/home-dns-adblock@main/dist/adguard-dns-full.txt",
+        "https://raw.githubusercontent.com/abclq/home-dns-adblock/main/dist/adguard-dns-full.txt",
+        "https://gh-proxy.com/raw.githubusercontent.com/abclq/home-dns-adblock/main/dist/adguard-dns-full.txt"
+      ]
+    },
+    {
+      "name": "miaoermua",
+      "urls": [
+        "https://raw.githubusercontent.com/miaoermua/AdguardFilter/main/rule.txt",
+        "https://cdn.jsdelivr.net/gh/miaoermua/AdguardFilter@main/rule.txt",
+        "https://gh-proxy.com/raw.githubusercontent.com/miaoermua/AdguardFilter/main/rule.txt"
+      ]
+    },
+    {
+      "name": "DickaHandsome",
+      "urls": [
+        "https://raw.githubusercontent.com/DickaHandsome/My-Ads-Rule/main/MyRule.txt",
+        "https://cdn.jsdelivr.net/gh/DickaHandsome/My-Ads-Rule@main/MyRule.txt",
+        "https://gh-proxy.com/raw.githubusercontent.com/DickaHandsome/My-Ads-Rule/main/MyRule.txt"
+      ]
+    }
+  ]
+}
