@@ -41,6 +41,15 @@
 | `stats.md` | 本次每个源贡献了多少规则、丢弃了什么 |
 
 ## 订阅链接
+推荐（实时，无缓存）
+https://gh-proxy.com/raw.githubusercontent.com/cbh198988/adfilter-merge/dist/merged-dns.txt
+
+备用（CDN，速度快）
+https://cdn.jsdelivr.net/gh/cbh198988/adfilter-merge@dist/merged-dns.txt
+
+hosts 格式（AdAway / 路由器）
+https://cdn.jsdelivr.net/gh/cbh198988/adfilter-merge@dist/merged-hosts.txt
+
 
 把 `<用户名>/<仓库名>` 换成你自己的，三种任选（国内网络建议用后两种）：
 
