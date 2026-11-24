@@ -1,0 +1,48 @@
+# 白名单 —— 这些域名【永远不许拦】，上游列表里出现也一律剔除
+# 支持三种写法：纯域名 / ||domain^ / 0.0.0.0 domain；# 和 ! 开头是注释
+#
+# 依据：https://github.com/abclq/home-dns-adblock 的 config/whitelist.txt 与
+# docs/domain-list.md，以及 2026-11 实测。里面每一条在上游激进列表里都被当成
+# 广告拦掉了，但实际是风控、业务 API、H5 离线包或正片 CDN —— 拦了红果/番茄/抖音会出问题。
+
+# ── 风控与设备注册（拦了 App 直接功能异常）──
+is.snssdk.com
+is-lq.snssdk.com
+security.snssdk.com
+security-hl.snssdk.com
+security-lq.snssdk.com
+sdfp.snssdk.com
+open.snssdk.com
+
+# ── H5 离线包（拦了界面白屏）──
+gecko.snssdk.com
+gecko-hl.snssdk.com
+gecko-lq.snssdk.com
+
+# ── 阅读 / 视频业务接口 ──
+reading-hl.snssdk.com
+reading-lq.snssdk.com
+stream.snssdk.com
+video-cn.snssdk.com
+
+# ── 番茄 / 红果主 API（拦了内容加载不出来）──
+api.fqnovel.com
+api3-normal-hl.fqnovel.com
+api3-normal-lf.fqnovel.com
+api3-normal-lq.fqnovel.com
+api5-normal-hl.fqnovel.com
+api5-normal-lf.fqnovel.com
+api5-normal-lq.fqnovel.com
+
+# ── 正片视频 CDN ──
+# 注意：广告用的是 v{N}-reading-ad.qznovelvod.com（带 -ad），正片是 -reading，必须区分
+v3-reading.qznovelvod.com
+v26-reading.qznovelvod.com
+v6-novelapp.fqnovelvod.com
+v6-novelapp-nxyd.fqnovelvod.com
+
+# ── 配置下发 ──
+frontier100-toutiao-hl.fqnovel.com
+frontier100-toutiao-lf.fqnovel.com
+frontier-toutiao.snssdk.com
+toutiao-frontier.snssdk.com

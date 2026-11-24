@@ -33,6 +33,50 @@ DOMAIN_RE = re.compile(
 NULL_IPS = {"0.0.0.0", "127.0.0.1", "::", "::1", "0"}
 STRIP_MODIFIERS = False  # 是否把 ||x^$third-party 剥成 ||x^（会扩大拦截范围）
 
+# 安全白名单：上游激进列表会把下列域名当广告拦掉，但它们实际是风控、业务 API、
+# H5 离线包、正片 CDN 或配置下发。拦了会导致抖音/番茄小说/红果短剧功能异常
+# （播放失败、界面白屏、设备注册失败）。默认强制放行，可用 --no-safety 关闭。
+SAFETY_ALLOW = {
+    # 风控与设备注册
+    "is.snssdk.com", "is-lq.snssdk.com", "security.snssdk.com", "security-hl.snssdk.com",
+    "security-lq.snssdk.com", "sdfp.snssdk.com", "open.snssdk.com",
+    # H5 离线包（拦了界面白屏）
+    "gecko.snssdk.com", "gecko-hl.snssdk.com", "gecko-lq.snssdk.com",
+    # 阅读 / 视频业务接口
+    "reading-hl.snssdk.com", "reading-lq.snssdk.com", "stream.snssdk.com", "video-cn.snssdk.com",
+    # 番茄 / 红果主 API
+    "api.fqnovel.com",
+    "api3-normal-hl.fqnovel.com", "api3-normal-lf.fqnovel.com", "api3-normal-lq.fqnovel.com",
+    "api5-normal-hl.fqnovel.com", "api5-normal-lf.fqnovel.com", "api5-normal-lq.fqnovel.com",
+    # 正片视频（注意与广告用的 -reading-ad 子域区分）
+    "v3-reading.qznovelvod.com", "v26-reading.qznovelvod.com",
+    "v6-novelapp.fqnovelvod.com", "v6-novelapp-nxyd.fqnovelvod.com",
+    # 配置下发
+    "frontier100-toutiao-hl.fqnovel.com", "frontier100-toutiao-lf.fqnovel.com",
+    "frontier-toutiao.snssdk.com", "toutiao-frontier.snssdk.com",
+}
+
+
+def load_allowlist(path: str) -> set[str]:
+    """读取外部白名单文件，支持 ||x^ / @@||x^ / 纯域名，忽略 ! 与 # 注释。"""
+    out: set[str] = set()
+    if not path or not os.path.exists(path):
+        return out
+    with open(path, encoding="utf-8", errors="ignore") as f:
+        for line in f:
+            line = line.strip()
+            if not line or line.startswith(("!", "#", "[")):
+                continue
+            line = line.removeprefix("@@")
+            if line.startswith("||"):
+                line = line[2:].split("^")[0].split("/")[0]
+            elif line.startswith("0.0.0.0 ") or line.startswith("127.0.0.1 "):
+                line = line.split()[1]
+            line = line.strip().lower().rstrip(".")
+            if DOMAIN_RE.match(line):
+                out.add(line)
+    return out
+
 
 def fetch(urls: list[str], timeout: int = 40, retries: int = 2) -> tuple[str, str]:
     """依次尝试候选 URL，返回第一个成功的内容和实际使用的 URL。"""
@@ -234,6 +278,8 @@ def main() -> int:
         action="store_true",
         help="把 ||x^$third-party 之类的规则剥掉修饰符后保留域名（更激进）",
     )
+    ap.add_argument("--allowlist", default="allowlist.txt", help="外部白名单文件路径")
+    ap.add_argument("--no-safety", action="store_true", help="关闭内置安全白名单（不推荐）")
     args = ap.parse_args()
 
     global STRIP_MODIFIERS
@@ -272,6 +318,25 @@ def main() -> int:
 
     # 例外优先：被放行的域名从拦截集合中移除
     all_block -= all_allow
+
+    # 外部白名单
+    ext = load_allowlist(args.allowlist)
+    if ext:
+        hit_ext = all_block & ext
+        if hit_ext:
+            all_block -= hit_ext
+            all_allow |= hit_ext
+            print(f"[allowlist] {args.allowlist} 放行 {len(hit_ext)} 条")
+
+    # 内置安全白名单：防止上游激进列表打断风控 / 业务 API / 离线包 / 正片
+    if not args.no_safety:
+        hit_safe = all_block & SAFETY_ALLOW
+        if hit_safe:
+            all_block -= hit_safe
+            all_allow |= hit_safe
+            print(f"[safety] 剔除 {len(hit_safe)} 条会破坏 App 功能的误拦域名")
+            for d in sorted(hit_safe):
+                print(f"         - {d}")
 
     if args.collapse:
         raw_count = len(all_block)

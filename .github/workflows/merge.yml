@@ -10,6 +10,7 @@ on:
     paths:
       - "sources.json"
       - "merge.py"
+      - "allowlist.txt"
       - ".github/workflows/merge.yml"
 
 permissions:
