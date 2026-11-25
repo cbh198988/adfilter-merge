@@ -1,0 +1,54 @@
+{
+  "sources": [
+    {
+      "name": "10007_reward",
+      "urls": [
+        "https://cdn.jsdelivr.net/gh/lingeringsound/10007_auto@master/reward",
+        "https://gh-proxy.com/raw.githubusercontent.com/lingeringsound/10007_auto/master/reward",
+        "https://raw.githubusercontent.com/lingeringsound/10007_auto/master/reward"
+      ]
+    },
+    {
+      "name": "adguard-cn-filter",
+      "urls": [
+        "https://cdn.jsdelivr.net/gh/philechen-eng/adguard-cn-filter@main/adguard-dns-full.txt",
+        "https://gh-proxy.com/raw.githubusercontent.com/philechen-eng/adguard-cn-filter/main/adguard-dns-full.txt"
+      ]
+    },
+    {
+      "name": "ad-wars",
+      "urls": [
+        "https://cdn.jsdelivr.net/gh/jdlingyu/ad-wars@master/hosts",
+        "https://gh-proxy.com/raw.githubusercontent.com/jdlingyu/ad-wars/master/hosts"
+      ]
+    },
+    {
+      "name": "awa-feng",
+      "urls": [
+        "https://cdn.jsdelivr.net/gh/Nangongzero/AWAvenue-Ads-Rule@main/AWAvenue-Ads-Rule.txt",
+        "https://gh-proxy.com/raw.githubusercontent.com/Nangongzero/AWAvenue-Ads-Rule/main/AWAvenue-Ads-Rule.txt"
+      ]
+    },
+    {
+      "name": "yhosts-bytedance",
+      "urls": [
+        "https://cdn.jsdelivr.net/gh/vokins/yhosts@master/data/bytedance.txt",
+        "https://gh-proxy.com/raw.githubusercontent.com/vokins/yhosts/master/data/bytedance.txt"
+      ]
+    },
+    {
+      "name": "yhosts-qq",
+      "urls": [
+        "https://cdn.jsdelivr.net/gh/vokins/yhosts@master/data/qq.txt",
+        "https://gh-proxy.com/raw.githubusercontent.com/vokins/yhosts/master/data/qq.txt"
+      ]
+    },
+    {
+      "name": "yhosts-unioncn",
+      "urls": [
+        "https://cdn.jsdelivr.net/gh/vokins/yhosts@master/data/union-cn.txt",
+        "https://gh-proxy.com/raw.githubusercontent.com/vokins/yhosts/master/data/union-cn.txt"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,82 @@
+name: Merge extra filter list (supplement)
+
+# 补充订阅，独立于主订阅的 merge.yml。
+# 产出发布到 dist-extra 分支；出问题只需在 DNS 过滤器里删掉这一条订阅，
+# 主订阅（dist 分支 / merged-dns.txt）完全不受影响。
+
+on:
+  schedule:
+    - cron: "42 * * * *"
+  workflow_dispatch: {}
+  push:
+    branches: [main]
+    paths:
+      - "sources-extra.json"
+      - "merge_extra.py"
+      - "merge.py"
+      - "allowlist.txt"
+      - ".github/workflows/merge-extra.yml"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: merge-extra-lists
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Build extra list (exclude main subscription)
+        run: python3 merge_extra.py --out dist-extra
+
+      - name: Safety check
+        id: guard
+        run: |
+          set -e
+          NEW=$(grep -c '^||' dist-extra/merged-extra.txt || true)
+          echo "补充列表域名数: $NEW"
+          if [ "$NEW" -lt 50 ]; then
+            echo "::error::补充列表少于 50 条，疑似源站异常，拒绝发布"
+            exit 1
+          fi
+          if [ "$NEW" -gt 5000 ]; then
+            echo "::error::补充列表超过 5000 条，可能把主订阅内容重复纳入，拒绝发布"
+            exit 1
+          fi
+
+      - name: Publish to dist-extra branch
+        run: |
+          set -e
+          cd dist-extra
+          git init -q
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout -q -b dist-extra
+          git add -A
+          git commit -q -m "chore: update extra supplement list $(date -u +%Y-%m-%dT%H:%M:%SZ)"
+          git push -f -q "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" dist-extra
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Purge jsDelivr cache
+        continue-on-error: true
+        run: |
+          for f in merged-extra.txt merged-extra-hosts.txt; do
+            curl -fsS "https://purge.jsdelivr.net/gh/${GITHUB_REPOSITORY}@dist-extra/${f}" || true
+          done
+
+      - name: Job summary
+        if: always()
+        run: cat dist-extra/extra-stats.md >> "$GITHUB_STEP_SUMMARY" || true
