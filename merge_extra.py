@@ -51,6 +51,11 @@ def main() -> int:
     ap.add_argument("--out", default="dist-extra")
     ap.add_argument("--allowlist", default="allowlist.txt")
     ap.add_argument(
+        "--allowlist-extra",
+        default="allowlist-extra.txt",
+        help="补充订阅专用白名单（不影响主订阅）",
+    )
+    ap.add_argument(
         "--base-urls",
         nargs="+",
         default=[
@@ -103,8 +108,12 @@ def main() -> int:
     all_block -= overlap
     print(f"[dedupe] 与主订阅重复 {len(overlap)} 条，已剔除")
 
-    # 2) 外部白名单 + 内置安全白名单（防止把风控/业务/正片域名拦了）
+    # 2) 白名单：共用白名单 + 补充专用白名单 + 内置安全白名单
     ext = m.load_allowlist(args.allowlist)
+    ext_extra = m.load_allowlist(args.allowlist_extra)
+    ext |= ext_extra
+    if ext_extra:
+        print(f"[allowlist-extra] 补充专用白名单加载 {len(ext_extra)} 条")
     safe = ext | m.SAFETY_ALLOW
     hit = all_block & safe
     all_block -= safe

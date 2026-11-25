@@ -49,6 +49,14 @@
         "https://cdn.jsdelivr.net/gh/vokins/yhosts@master/data/union-cn.txt",
         "https://gh-proxy.com/raw.githubusercontent.com/vokins/yhosts/master/data/union-cn.txt"
       ]
+    },
+    {
+      "name": "ADgk",
+      "urls": [
+        "https://cdn.jsdelivr.net/gh/banbendalao/ADgk@master/ADgk.txt",
+        "https://gh-proxy.com/raw.githubusercontent.com/banbendalao/ADgk/master/ADgk.txt",
+        "https://raw.githubusercontent.com/banbendalao/ADgk/master/ADgk.txt"
+      ]
     }
   ]
 }

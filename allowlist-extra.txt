@@ -1,0 +1,37 @@
+# ADgk 补充源专用白名单 —— 只作用于补充订阅，不影响主订阅
+# 这些是 ADgk 列表里被误当成广告的大厂功能/业务子域，必须放行。
+# 宁可少拦几条广告，也不能打断购物、搜索、推送、浏览器内核等正常功能。
+
+# 淘宝：商品详情 / 反馈 / 错误上报
+detail.taobao.com
+bcfeedback.taobao.com
+err.taobao.com
+
+# 百度：反爬验证 / 搜索框 / 其它业务子域
+anti-bot.baidu.com
+static1.searchbox.baidu.com
+sjh.baidu.com
+xsolid.baidu.com
+wkctj.baidu.com
+
+# 小米：推送 / 应用商店
+misc.pandora.xiaomi.com
+mishop.cdn.pandora.xiaomi.com
+
+# QQ / 微信：H5 / 浏览器内核 / 其它业务子域
+life.html5.qq.com
+recmd.html5.qq.com
+as.weixin.qq.com
+szlong.weixin.qq.com
+tbsone.imtt.qq.com
+variety.tc.qq.com
+wxs.qq.com
+zhizi.qq.com
+omgmta.qq.com
+
+# 头条 / 抖音电商
+d.toutiao.com
+haohuo.snssdk.com
+
+# 京东
+mars.jd.com

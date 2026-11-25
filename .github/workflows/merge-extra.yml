@@ -15,6 +15,7 @@ on:
       - "merge_extra.py"
       - "merge.py"
       - "allowlist.txt"
+      - "allowlist-extra.txt"
       - ".github/workflows/merge-extra.yml"
 
 permissions:
